@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Menu
+{% endblock %}
+
+{% block category %}
+    <li class="breadcrumb-item">Menu</li>
+{% endblock %}
+
+{% block current_page %}
+    {{ menu.name }}
+{% endblock %}
+
+{% block contents %}
+   <div style="float: left;"><h1><strong>{{ menu.name }}</strong></h1></div>
+    <br><br><br>
+    <p style="float: left;">last updated: {{ menu.uploaded_date }}</p>
+
+    {% if g.user.id == 1 %}
+    <p style="float: right;">SUGGESTION : &nbsp;&nbsp;
+    {% if suggestion == None %}<span class="badge badge-warning" style="float:right; margin-right: 3%; margin-top: -13%">LOW SALES</span>{% endif %}
+    {% if suggestion == 0 %}<span class="badge badge-danger" style="float:right; margin-right: 3%; margin-top: -13%">CHANGE</span>{% endif %}
+    {% if suggestion == 1 %}<span class="badge badge-info" style="float:right; margin-right: 3%; margin-top: -13%">GOOD</span>{% endif %}
+    {% if suggestion == 2 %}<span class="badge badge-success" style="float:right; margin-right: 3%; margin-top: -13%">BEST</span>{% endif %}
+    </p>
+    {% endif %}
+    <br><br><br>
+
+
+    <!-- Introduction of database -->
+    <div class="col-lg-12">
+    <div class="card mb-4">
+    <div class="card-body">
+{#        <div style="display: inline-block;">#}
+{#            <img src="{{ url_for('static', filename=figure) }}" style="max-width:50%; max-height: 50%; vertical-align: middle;">#}
+{#        </div>#}
+        <div class="card-group">
+        <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-uppercase mb-1">Ingredients</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ menu.ingredients }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-uppercase mb-1">Reviews</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ menu.review_set|length }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-uppercase mb-1">Rating</div>
+                        {% if menu.review_set|length != 0 %}
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">★ {{ rating }} <hr>{{ menu.sales }} orders</div>
+                        {% endif %}
+                        {% if menu.review_set|length == 0 %}
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">There is no review</div>
+                        {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2" style="overflow: hidden">
+                        <img src="{{ url_for('static', filename=figure) }}"
+                             style="width: 100%; height: auto; object-fit: cover;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+    <br><br><br>
+        {% if g.user.access == 1 %}
+            <hr>
+        <div>
+            <form action="{{ url_for('review.create', menu_id=menu.id) }}" method="post">
+                <div class="form-group" style="width: fit-content;">
+                      <label for="rating">Select rating of {{ menu.name }}</label>
+                      <select class="form-control" id="rating" name="rating">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                </div>
+                <div class="form-group" style="width: fit-content;">
+                      <label for="sales">Please enter your purchase volume</label>
+                      <select class="form-control" id="sales" name="sales">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                      </select>
+                </div>
+                <button type="submit" class="btn btn-primary" value="Upload">Submit</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    </div>
+
+
+    </div>
+
+{% endblock %}
+
+<!-- Page level plugins -->
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>

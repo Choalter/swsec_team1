@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Menu
+{% endblock %}
+
+{% block category %}
+    <li class="breadcrumb-item">Menu</li>
+{% endblock %}
+
+{% block current_page %}
+    List
+{% endblock %}
+
+{% block contents %}
+<div class="col-lg-12">
+      <div class="card mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Menu List</h6>
+        </div>
+        <div class="table-responsive p-3">
+          <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+            <thead class="thead-light">
+              <tr>
+                  <th>No</th>
+                  <th>Name</th>
+                  <th>Ingredients</th>
+                  <th>Price</th>
+                  <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% if menu_list != None %}
+            {% for menu in menu_list.items %}
+              <tr>
+                  <td>{{ menu_list.total - ((menu_list.page-1)*menu_list.per_page) - loop.index0 }}</td>
+                  <td><a href="{{ url_for('menu.detail', menu_id=menu.id) }}">{{ menu.name }}</a></td>
+                  <td>{{ menu.ingredients }}</td>
+                  <td>{{ menu.price }}</td>
+                  {% if menu.rate != 0 %}
+                  <td>{{ menu.rate }}</td>
+                  {% endif %}
+                  {% if menu.rate == 0 %}
+                  <td>No Reviews</td>
+                  {% endif %}
+              </tr>
+            {% endfor %}
+            {% endif %}
+            {% if menu_list == None %}
+            <p>There is no menu</p>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <ul class="pagination justify-content-center">
+    <!-- previous page -->
+    {% if menu_list.has_prev %}
+        <li class="page-item">
+        <a class="page-link" href="?page={{ menu_list.prev_num }}">Previous</a>
+        </li>
+    {% else %}
+        <li class="page-item">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Previous</a>
+        </li>
+    {% endif %}
+
+    <!-- current page -->
+    {% for page_num in menu_list.iter_pages() %}
+        {% if page_num %}
+            {% if page_num != menu_list.page %}
+                <li class="page-item">
+                <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+            {% else %}
+                <li class="page-item" aria-current="page">
+                <a class="page-link" href="#">{{ page_num }}</a>
+                </li>
+            {% endif %}
+        {% else %}
+            <li class="disabled">
+            <a class="page-link" href="#">...</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+
+    <!-- next page -->
+    {% if menu_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ menu_list.next_num }}">Next</a>
+        </li>
+    {% else %}
+        <li class="page-item">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">Next</a>
+        </li>
+    {% endif %}
+    </ul>
+    {% if g.user.access == 0 %}
+    <a href="{{ url_for('menu.upload') }}" class="btn btn-sm btn-primary">Upload Your Menu!</a>
+    {% endif %}
+{% endblock %}
+
+  <!-- Page level plugins -->
+  <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+  <!-- Page level custom scripts -->
+  <script>
+    $(document).ready(function () {
+      $('#dataTable').DataTable(); // ID From dataTable
+      $('#dataTableHover').DataTable(); // ID From dataTable with Hover
+    });
+  </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".page-link").on('click', function() {
+            $("#page").val($(this).data("page"));
+            $("#searchForm").submit();
+        });
+        $("btn_search").on('click', function() {
+            $("#search_bar").val($(".search_bar").val());
+            $("#page").val(1);
+            $("#searchForm").submit();
+        });
+    });
+    </script>
